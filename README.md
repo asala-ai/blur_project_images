@@ -3,9 +3,8 @@
 ##  Student Information
 - **Name:** Asala Abdel-Naim Abu Gharaara  
 - **Major:** Data Science & Artificial Intelligence  
-- **University:** الكلية الجامعية للعلوم التطبيقية  
-- **Course:** Digital Image Processing / Computer Vision  
-
+- **University:** University College of Applied Sciences 
+- **Course:** Digital Image Processing 
 ---
 
 ##  Project Overview
