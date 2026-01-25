@@ -43,3 +43,9 @@ Dataset categories:
 - Images were loaded directly from the Kaggle dataset directory.
 - All images were converted to **grayscale**.
 - No resizing was applied since the dataset images were
+
+## Final Notes
+This project demonstrates that classical image processing features,
+when carefully selected and combined with a machine learning model,
+can achieve strong performance in image blur detection tasks without
+the need for deep learning. 
