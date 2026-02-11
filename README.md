@@ -1,4 +1,4 @@
-#  Image Blur Detection Project
+#  Image Blur Detection Project 
 
 ##  Student Information
 - **Name:** Asala Abdel-Naim Abu Gharaara  
