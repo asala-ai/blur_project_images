@@ -1,81 +1,210 @@
-#  Image Blur Detection Project
+# Image Blur vs. Sharp Classification  
+Using Traditional Neural Networks (MLP)
 
-##  Student Information
-- **Name:** Asala Abdel-Naim Abu Gharaara  
+---
+
+## Student Information
+- **Name:** Asala Abdel-Naim Abu Gharaara & Sara Abu Mandil  
 - **Major:** Data Science & Artificial Intelligence  
-- **University:** University College of Applied Sciences 
-- **Course:** Digital Image Processing 
----
-
-##  Project Overview
-This project focuses on detecting whether an image is **sharp** or **blurred** using
-classical image processing techniques combined with a machine learning classifier.
-
-Instead of relying on deep learning models, this project extracts **handcrafted features**
-related to image sharpness and uses them to train a classifier that distinguishes between
-sharp and blurred images.
+- **University:** University College of Applied Sciences  
+- **Course:** Digital Image Processing  
 
 ---
 
-##  Dataset Source
-The dataset used in this project is the **Blur Dataset** from **Kaggle**.
+## Project Overview
 
- **Important Note:**  
-The dataset was **not downloaded manually**.  
-Instead, it was accessed directly using Kaggle’s official API through Python code
-(`kagglehub`), and the experiments were performed on the dataset path provided by Kaggle.
+This project focuses on detecting whether an image is **Sharp** or **Blurred** using classical image processing techniques combined with a machine learning classifier.
 
-Dataset categories:
+Instead of relying on computationally expensive Convolutional Neural Networks (CNNs), this work adopts a lightweight and efficient approach based on **handcrafted spatial features** and a **Multi-Layer Perceptron (MLP)** model.
+
+The goal is to demonstrate that carefully engineered features can achieve strong performance in blur detection without deep learning architectures.
+
+---
+
+## Problem Statement
+
+Blur reduces edge clarity and high-frequency details in images, which negatively affects image quality and computer vision systems.
+
+This project addresses a **binary image classification problem**:
+
+- Sharp Images → 0  
+- Blurred Images → 1  
+
+---
+
+## Dataset
+
+The dataset used in this project is the **Blur Dataset** from Kaggle.
+
+### Important Note
+The dataset was accessed programmatically using Kaggle’s official API (`kagglehub`) directly through Python code.  
+It was not downloaded manually.
+
+### Dataset Categories
 - `sharp`
 - `motion_blurred`
 - `defocused_blurred`
 
- **Dataset Details:**
+### Dataset Details
 - Total images: **1050**
-- Images per class: **350**
-- Labels used for classification:
-  - `sharp` → 0  
-  - `motion_blurred`, `defocused_blurred` → 1  
+- 350 Sharp images
+- 350 Motion Blur images
+- 350 Defocus Blur images
 
-##  Model Evaluation Results (Unified Analysis)
+For binary classification:
+- `sharp` → 0  
+- `motion_blurred` & `defocused_blurred` → 1  
+
+### Data Split
+- 80% Training
+- 20% Testing
+
+---
+
+## Preprocessing
+
+- Images loaded directly from Kaggle dataset directory
+- Converted to **grayscale**
+- No resizing applied (images were already consistent and suitable for feature extraction)
+- Feature scaling performed using **StandardScaler**
+- The fitted scaler was saved and reused during inference
+
+---
+
+## Feature Extraction
+
+Spatial handcrafted features were extracted to measure edge strength and gradient energy:
+
+- Sobel X Variance (`sobel_x_var`)
+- Tenengrad
+- Sobel Magnitude Mean (`sobel_mag_mean`)
+- Laplacian Variance (removed after feature selection)
+
+### Feature Selection Findings
+- Sobel X Variance → Most important
+- Tenengrad → Second most important
+- Laplacian → Least important (removed in final model)
+
+Blurred images show significantly lower edge-based feature responses compared to sharp images.
+
+---
+
+## Model Architecture
+
+Multi-Layer Perceptron (MLP)
+
+- Input: Feature vector
+- Hidden Layer: 50 neurons (ReLU activation)
+- Output Layer: 1 neuron (Sigmoid activation)
+
+### Training Details
+- Optimizer: Adam
+- Loss Function: Binary Cross-Entropy
+- Max Iterations: 2000
+- Cross-validation applied
+- Hidden neurons tested: 10, 20, 50, 100
+- Best configuration: 50 neurons
+
+---
+
+## Evaluation Metrics
+
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- AUC
+
+---
+
+## Results
+
+### Final Performance
+
+- Test Accuracy: **90.95%**
+- Cross-Validation Accuracy: **92.19%**
+- AUC ≈ **0.95**
 
 ### Confusion Matrix
 
-![Confusion Matrix](confusion_matrix.png)
+- True Negatives: 57
+- True Positives: 134
+- False Positives: 13
+- False Negatives: 6
 
-**Analysis:**  
-The confusion matrix provides a clear and detailed evaluation of the blur detection model performance.  
-It shows that the model successfully classifies most **blurred images** with high accuracy, indicating strong sensitivity to blur-related features.  
-A small number of **sharp images** are misclassified as blurred, which can be attributed to low contrast, weak edges, or smooth regions that resemble blur characteristics.  
-Overall, the confusion matrix confirms that the model is reliable and effective for binary blur classification.
-
----
-
-### Feature Distributions
-
-![Feature Distributions](Features.png)
-
-**Analysis:**  
-This figure illustrates the distributions of the extracted image features used in the classification process, including **Laplacian Variance**, **Gradient Variance**, **Sobel Magnitude**, and **Tenengrad**.  
-The plots clearly show that sharp images tend to have higher values for edge-based features, while blurred images exhibit lower responses due to the loss of high-frequency information.  
-Among all features, **Laplacian Variance** and **Tenengrad** demonstrate the strongest separation between sharp and blurred images, highlighting their effectiveness for blur detection.  
-These visual results support the quantitative performance metrics and justify the feature selection strategy adopted in this project.
+The model demonstrates strong performance and stable generalization without overfitting.
 
 ---
 
-### Overall Interpretation
+## Experiments Conducted
 
-The combination of visual analysis and numerical evaluation confirms that the proposed feature-based approach, together with an MLP classifier, provides a robust and efficient solution for image blur detection.  
-The results validate that classical image processing features can achieve strong performance without relying on complex deep learning architectures.
+- Architecture comparison
+- Feature importance analysis
+- Feature ablation study
+- Cross-validation validation
 
+Feature ablation confirmed that removing Laplacian Variance did not reduce performance.
 
-##  Preprocessing
-- Images were loaded directly from the Kaggle dataset directory.
-- All images were converted to **grayscale**.
-- No resizing was applied since the dataset images were
+---
 
-## Final Notes
-This project demonstrates that classical image processing features,
-when carefully selected and combined with a machine learning model,
-can achieve strong performance in image blur detection tasks without
-the need for deep learning. 
+## Model Deployment
+
+- Final trained MLP model saved using **Joblib**
+- Selected feature list saved separately
+- StandardScaler saved and reused
+- Same preprocessing pipeline applied during inference to prevent data leakage
+
+The model is fully prepared for real-world inference.
+
+---
+
+## Web Application
+
+A web-based interface was developed to demonstrate real-time image classification.
+
+### Interface Capabilities
+
+- Users upload external images
+- System automatically:
+  - Converts image to grayscale
+  - Extracts selected features
+  - Applies saved StandardScaler
+  - Loads trained MLP model
+  - Generates prediction
+
+### Output
+
+- Displays classification result: **Sharp / Blurred**
+- Shows prediction confidence score
+
+### Live Demo
+
+https://image-blur-sharp-classification-r85.vercel.app/
+
+---
+
+## Conclusion
+
+This project proves that traditional machine learning methods, combined with well-designed handcrafted features, can effectively solve image blur detection problems.
+
+The approach is:
+
+- Computationally efficient
+- Lightweight
+- Suitable for real-time applications
+- Practical for deployment environments where CNNs are impractical
+
+---
+
+## Final Note
+
+This project demonstrates the successful integration of:
+
+- Classical image processing
+- Feature engineering
+- Neural networks (MLP)
+- Model evaluation
+- Model deployment
+- Web-based real-world inference
+
+It represents a complete end-to-end Data Science pipeline.
